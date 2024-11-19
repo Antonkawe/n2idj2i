@@ -1,25 +1,30 @@
 const videoElement = document.getElementById("videoJumpscare");
 
 if (videoElement) {
-    // Tampilkan video, pastikan suara aktif, dan mulai pemutaran
+    // Tampilkan video
     videoElement.style.display = "block";
-    videoElement.muted = false; // Pastikan suara tidak mute
-    videoElement.loop = true; // Loop otomatis
-    videoElement.play().catch((error) => {
-        console.error("Gagal memutar video:", error.message);
+
+    // Pastikan video tidak mute dan suara aktif
+    videoElement.muted = false;
+    videoElement.loop = true;
+
+    // Gunakan play() untuk memastikan video dan audio dimulai bersamaan
+    videoElement.load(); // Muat ulang video untuk sinkronisasi
+    videoElement.addEventListener("canplay", () => {
+        videoElement.play().catch((error) => {
+            console.error("Gagal memutar video:", error.message);
+        });
     });
 
-    // Sembunyikan scrollbar dan kunci layar
+    // Blokir scroll dan interaksi
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
 
-    // Fungsi untuk memblokir semua interaksi pengguna
-    function disableInteraction(event) {
+    const disableInteraction = (event) => {
         event.preventDefault();
         event.stopPropagation();
-    }
+    };
 
-    // Tambahkan listener untuk memblokir semua input
     const eventsToBlock = [
         "keydown",
         "keyup",
@@ -38,25 +43,19 @@ if (videoElement) {
         window.addEventListener(eventName, disableInteraction, true);
     });
 
-    // Pastikan video kembali ke awal jika selesai (jika loop gagal)
-    videoElement.addEventListener("ended", () => {
-        videoElement.currentTime = 0;
-        videoElement.play();
-    });
-
-    // Tambahkan overlay untuk memblokir klik pada seluruh layar
+    // Tambahkan overlay untuk memblokir interaksi pengguna
     const overlay = document.createElement("div");
     overlay.style.position = "fixed";
     overlay.style.top = "0";
     overlay.style.left = "0";
     overlay.style.width = "100vw";
     overlay.style.height = "100vh";
-    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)"; // Opsional: efek gelap
+    overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
     overlay.style.zIndex = "9999";
-    overlay.style.cursor = "not-allowed"; // Tampilkan kursor "diblokir"
+    overlay.style.cursor = "not-allowed";
     document.body.appendChild(overlay);
 
-    console.log("Video berhasil dimulai dan layar terkunci.");
+    console.log("Video berhasil dimulai dengan sinkronisasi.");
 } else {
     console.error("Elemen videoJumpscare tidak ditemukan.");
 }
