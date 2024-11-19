@@ -1,25 +1,26 @@
 const videoElement = document.getElementById("videoJumpscare");
 
 if (videoElement) {
-    // Tampilkan video
-    videoElement.style.display = "block";
-
-    // Pastikan video tidak mute dan suara aktif
-    videoElement.muted = false;
+    // Aktifkan autoplay dan pastikan tidak mute
+    videoElement.autoplay = true;
+    videoElement.muted = false; // Pastikan audio aktif
     videoElement.loop = true;
+    videoElement.preload = "auto"; // Preload video
 
-    // Gunakan play() untuk memastikan video dan audio dimulai bersamaan
+    // Tampilkan video langsung
+    videoElement.style.display = "block";
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    // Mulai video segera setelah bisa diputar
     videoElement.load(); // Muat ulang video untuk sinkronisasi
-    videoElement.addEventListener("canplay", () => {
+    videoElement.addEventListener("canplaythrough", () => {
         videoElement.play().catch((error) => {
             console.error("Gagal memutar video:", error.message);
         });
     });
 
-    // Blokir scroll dan interaksi
-    document.body.style.overflow = "hidden";
-    document.documentElement.style.overflow = "hidden";
-
+    // Blokir interaksi pengguna
     const disableInteraction = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -43,7 +44,7 @@ if (videoElement) {
         window.addEventListener(eventName, disableInteraction, true);
     });
 
-    // Tambahkan overlay untuk memblokir interaksi pengguna
+    // Tambahkan overlay untuk memblokir semua interaksi
     const overlay = document.createElement("div");
     overlay.style.position = "fixed";
     overlay.style.top = "0";
@@ -55,7 +56,7 @@ if (videoElement) {
     overlay.style.cursor = "not-allowed";
     document.body.appendChild(overlay);
 
-    console.log("Video berhasil dimulai dengan sinkronisasi.");
+    console.log("Video berhasil dimuat dan langsung muncul.");
 } else {
     console.error("Elemen videoJumpscare tidak ditemukan.");
 }
